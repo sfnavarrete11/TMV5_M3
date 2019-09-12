@@ -1,0 +1,311 @@
+---
+title: "ggplot2"
+author: "RUGE"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## ggplot2
+
+ggplot permite generar gráficos 2D basados en capas, que se pueden adicionar en infinitas combinaciones, empoderando al científico para que pueda realizar gráficos imposibles para otros programas tradicionales
+
+### <span style="color:red">Elementos básicos</span>
+
+<center>![R Users Group - Ecuador](https://raw.githubusercontent.com/Rgrupoec/Rgrupoec.github.io/master/img/publicaciones/ggp_cap.png)</center> 
+
+3 elementos básicos
+
+```{r}
+library(ggplot2)
+ggplot(mtcars, aes(x = hp, y = mpg)) +
+  geom_point()
+```
+
+Forma tidyverse
+
+tidyverse es una colección de paquetes R diseñados para la ciencia de datos. Todos los paquetes comparten una filosofía de diseño, gramática y estructuras de datos subyacentes.
+
+```{r message=F}
+library(tidyverse)
+mtcars %>%
+  ggplot(aes(x = hp, y = mpg)) +
+  geom_point()
+```
+
+### <span style="color:red">Geometrias básicas</span>
+
+## Gráficos que consideran una variable continua
+
+Histograma de frecuencia
+```{r}
+
+ggplot(mtcars, aes(x = mpg)) + 
+  geom_histogram(binwidth = 1)
+
+```
+
+Gráfico de densidad
+
+```{r}
+ggplot(mtcars, aes(x = mpg)) + 
+  geom_density()
+
+```
+
+Gráfico de puntos
+```{r}
+ggplot(mtcars, aes(x = mpg)) + 
+  geom_dotplot()
+```
+
+Polígono de frecuencia
+```{r}
+ggplot(mtcars, aes(x = mpg)) + 
+  geom_freqpoly()
+
+```
+
+
+## Gráficos que consideran una variable discreta
+
+Gráfico de barras
+```{r}
+ggplot(mtcars, aes(x = factor(gear))) + 
+  geom_bar(width=0.5, colour="blue", fill="red")
+```
+
+
+
+## Gráficos que consideran dos variables continuas
+
+Gráfico de dispersión o puntos bivariados
+
+```{r}
+ggplot(mtcars, aes(x = mpg, y = hp)) + 
+  geom_point()
+```
+
+Gráfico de Alfombra, manta, tapete (rug)
+
+```{r}
+ggplot(mtcars, aes(x = mpg, y = hp)) + 
+  geom_rug()
+```
+
+
+## Gráficos que consideran dos variables (discreta y continua)
+
+Gráfico de barras con geom_col
+```{r}
+ggplot(mtcars, aes(x = factor(gear), y = mpg)) +
+  geom_col() 
+```
+
+Gráfico de caja o de bigotes
+
+```{r}
+ggplot(mtcars, aes(x = factor(gear), y = mpg)) +
+  geom_boxplot()
+```
+
+Gráfico de violin
+
+```{r}
+ggplot(mtcars, aes(x = factor(gear), y = mpg)) +
+  geom_violin()
+```
+
+### <span style="color:red">Atributos y mapeos</span>
+
+## Gráficos que consideran dos variables continuas
+
+Gráfico de dispersión o puntos bivariados
+
+```{r}
+datos <- mtcars %>% 
+  mutate_at(vars(c("cyl", "vs", "am", "gear", "carb")), factor) 
+
+ggplot(datos, aes(x = mpg, y = hp, col = gear, label = hp)) + 
+  geom_point() +
+  geom_text(vjust = 1.5)
+```
+
+## Gráficos que consideran dos variables (discreta y continua)
+
+Gráfico de barras con geom_col
+
+```{r}
+ggplot(datos, aes(x = gear, y = mpg, fill = cyl)) +
+  geom_col()
+```
+
+Gráfico de barras con geom_bar
+
+```{r}
+ggplot(datos, aes(x = gear,  fill = cyl)) +
+  geom_bar(position="dodge")
+```
+
+Gráfico de caja o de bigotes
+
+```{r}
+ggplot(datos, aes(x = factor(gear), y = mpg, fill = gear)) +
+  geom_boxplot(fill = "white") + 
+  geom_violin(alpha = 0.5)
+```
+
+Gráficos que considran una variable continua
+
+Gráfico de densidad
+```{r}
+ggplot(datos, aes(x = mpg, fill = gear)) + 
+  geom_density(alpha = 0.3)
+```
+
+
+### <span style="color:red">Sumar capas geométricas</span>
+
+```{r}
+## Gráfico Inicial
+
+datos %>% 
+  ggplot(aes(x = gear, y = mpg)) + 
+  geom_point() +
+  geom_boxplot()
+```
+
+Gráfico de Caja con puntos sobrexpuestos
+
+```{r}
+datos %>% 
+  ggplot(aes(x = gear, y = mpg)) + 
+  geom_boxplot() +
+  geom_point() 
+```
+
+Gráfico de Puntos con Caja transparente sobrexpuesta
+
+```{r}
+datos %>% 
+  ggplot(aes(x = gear, y = mpg)) + 
+  geom_point() +
+  geom_boxplot(alpha = 0.3)
+```
+
+Gráfico de Caja con puntos sobrexpuestos y línea de media de mpg
+
+```{r}
+# Cálculo de la media de mpg
+media <- mean(datos$mpg)
+
+datos %>% 
+  ggplot(aes(x = gear, y = mpg)) + 
+  geom_boxplot() +
+  geom_point() +
+  geom_hline(yintercept = media, colour = "red", linetype = "dashed")
+```
+
+### <span style="color:red">Añadir etiquetas a los gráficos (títulos)</span>
+
+Gráfico Inicial
+
+```{r}
+graf_ejemplo <- datos %>% 
+  ggplot(aes(x = hp, y = mpg, col = gear, shape = vs)) + 
+  geom_point(size = 2)
+
+graf_ejemplo
+```
+
+Añadir Etiquetas (labels)
+
+```{r}
+graf_ejemplo + 
+  labs(title = "Gráfico de dispersión de hp vs mpg",
+       subtitle = "A mayor hp se observa menor mpg",
+       x = "hp \n(Caballos de fuerza)",
+       y = "mpg \n(Millas por galón)",
+       col = "Cantidad de cambios",
+       shape = "Tiene forma en V",
+       caption = "Fuente de datos: mtcars")
+```
+
+Otra forma
+
+```{r}
+graf_ejemplo + 
+      ggtitle(label = "Gráfico de dispersión de hp vs mpg", subtitle = "A mayor hp se observa menor mpg") +
+      xlab(label = 'hp \n(Caballos de fuerza)') +
+      ylab(label = 'mpg \n(Millas por galón)')
+```
+
+
+### <span style="color:red">Añadir facets a los gráficos (títulos)</span>
+
+Añadir Facets
+```{r}
+graf_ejemplo +
+  facet_wrap(~ cyl, nrow = 2, scales = "free_y") + 
+  labs(title = "Caballos de fuerza vs millas por galón por cilindros")
+```
+
+
+### <span style="color:red">Añadir temas a los gráficos (títulos)</span>
+
+```{r}
+graf_ejemplo +
+      theme_minimal()
+```
+
+```{r}
+graf_ejemplo +
+      theme_dark()
+```
+
+```{r}
+library(ggthemes)
+
+graf_ejemplo +
+      theme_economist() + 
+      scale_color_economist() +
+      ggtitle("Gráfico de dispersión de hp vs mpg")
+```
+
+```{r}
+graf_ejemplo +
+      theme_stata() + 
+      scale_color_stata() +
+      ggtitle("Gráfico de dispersión de hp vs mpg")
+```
+
+```{r}
+graf_ejemplo +
+      theme_hc()+ scale_colour_hc() +
+      ggtitle("Gráfico de dispersión de hp vs mpg")
+
+```
+
+Modificar o crear temas
+
+```{r}
+graf_ejemplo +
+      ggtitle(label = "Gráfico de dispersión de hp vs mpg", subtitle = "A mayor hp se observa menor mpg") +
+      xlab(label = 'hp \n(Caballos de fuerza)') +
+      ylab(label = 'mpg \n(Millas por galón)') +
+      theme_light() +
+      theme(panel.background = element_rect(fill = "lightblue"),
+            plot.background = element_rect(colour = "green", fill="gray"),
+            legend.background = element_rect(fill = "orange"),
+            axis.text.x =  element_text(color = "red", angle = 45))
+```
+
+Modificar o revisar detalle de cada tema
+
+```{r}
+# theme_set(theme_gray(base_size = 20))
+# 
+# theme_gray
+```
