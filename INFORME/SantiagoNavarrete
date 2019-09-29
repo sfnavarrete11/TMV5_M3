@@ -1,0 +1,45 @@
+---
+title: "Trabajo Final Curso TVM-R"
+author: "Santiago Navarrete"
+date: "9/28/2019"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+```{r setup, include=FALSE,warning=FALSE,error=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Informe de los Homicidios y Asesinatos en Ecuador en el 2014
+
+Se va a presentar un Informe de los tipos de Homicidio y Asesinatos que hubo en el Ecudor en el 2014. Primeros vamos a ver una tabla que muestra la cantidad de casos de Homicidios y Asesinatos:
+```{r, echo=FALSE,message=FALSE}
+library(readxl)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r,echo = FALSE,warning=FALSE} 
+AsesinatosyHomicidios2014 <- read_excel("~/Desktop/AsesinatosyHomicidios2014.xlsx")
+table(AsesinatosyHomicidios2014$tipo_muert_matriz )
+Tipo <- table(AsesinatosyHomicidios2014$tipo_muert_matriz )
+barplot(Tipo)
+```
+
+
+## Gráficos de los Principales datos:
+
+
+```{r pressure, echo=FALSE}
+ hist(AsesinatosyHomicidios2014$Edad)
+Sexo <- c(AsesinatosyHomicidios2014$Sexo) 
+table(Sexo)
+pie(table(Sexo)) 
+EstadoCivil <- c(AsesinatosyHomicidios2014$`Estado Civil`)
+table(EstadoCivil)
+pie(table(EstadoCivil)) 
+```
+
+
